@@ -24,10 +24,15 @@
       font-size: 3rem;
       font-weight: bold;
       color: white;
-      -webkit-text-stroke: 0.8px #ff3c3c;
-      text-shadow: none;
+      text-shadow: 0 0 6px white;
       margin: 10px 0 20px;
       letter-spacing: 2px;
+    }
+
+    .red-outline {
+      color: white;
+      -webkit-text-stroke: 0.8px #ff3c3c;
+      text-shadow: none;
     }
 
     .subtext {
@@ -50,10 +55,10 @@
   </style>
 </head>
 <body>
-  <div id="mainTitle" class="timer">Cargando...</div>
-  <div id="sunsetClock" class="timer" style="display: none;">--:--</div>
+  <div id="mainTitle" class="timer red-outline">Cargando...</div>
+  <div id="sunsetClock" class="timer red-outline" style="display: none;">--:--</div>
   <div id="infoBox" class="subtext" style="display: none;"></div>
-  <div id="countdown" class="timer" style="display: none;">--:--:--</div>
+  <div id="countdown" class="timer red-outline" style="display: none;">--:--:--</div>
   <div id="postCountdownNote" class="subtext" style="display: none;"></div>
 
   <select id="langSelector">
@@ -62,8 +67,6 @@
     <option value="en">English</option>
     <option value="fr">Français</option>
     <option value="zh">中文</option>
-    <option value="pt">Português</option>
-    <option value="ja">日本語</option>
   </select>
 
   <script>
@@ -95,20 +98,6 @@
         beforeShow: "灯光秀将在埃菲尔铁塔点亮后每小时整点开始，持续至凌晨1点。",
         afterShow: "下一场灯光秀将在下一个整点开始，持续5分钟。",
         loading: "正在加载预计时间..."
-      },
-      pt: {
-        beforeTitle: "Horário estimado da iluminação da Torre Eiffel",
-        afterTitle: "Próximo espetáculo de luzes",
-        beforeShow: "O espetáculo de luzes começa a cada hora cheia após a iluminação da Torre Eiffel, até a 1h00.",
-        afterShow: "O próximo espetáculo começará na próxima hora cheia e durará 5 minutos.",
-        loading: "Carregando horário estimado..."
-      },
-      ja: {
-        beforeTitle: "エッフェル塔の点灯予定時刻",
-        afterTitle: "次のライトショー",
-        beforeShow: "ライトショーはエッフェル塔が点灯した後、毎時ちょうどに始まり、午前1時まで続きます。",
-        afterShow: "次のライトショーは次の正時に始まり、5分間続きます。",
-        loading: "予定時刻を読み込み中..."
       }
     };
 
@@ -164,17 +153,15 @@
         nextShow.setHours(nextShow.getHours() + 1);
       }
 
-      const endText = {
-        es: "Último espectáculo finalizado por hoy",
-        en: "Last show finished for today",
-        fr: "Dernier spectacle terminé pour aujourd’hui",
-        zh: "今日灯光秀已结束",
-        pt: "Último espetáculo encerrado hoje",
-        ja: "本日のライトショーは終了しました"
-      };
-
       if (nextShow.getHours() > lastShowHour) {
-        document.getElementById("countdown").textContent = endText[currentLang] || endText["es"];
+        document.getElementById("countdown").textContent =
+          currentLang === "zh"
+            ? "今日灯光秀已结束"
+            : currentLang === "fr"
+              ? "Dernier spectacle terminé pour aujourd'hui"
+              : currentLang === "en"
+                ? "Last show finished for today"
+                : "Último espectáculo finalizado por hoy";
         document.getElementById("postCountdownNote").style.display = "none";
         return;
       }
@@ -184,4 +171,29 @@
       const mins = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
       const secs = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
 
-      document.getElementById("countdown").textContent = `${hrs
+      document.getElementById("countdown").textContent = `${hrs}:${mins}:${secs}`;
+    }
+
+    function fetchSunsetTime() {
+      fetch("https://api.sunrise-sunset.org/json?lat=48.8566&lng=2.3522&formatted=0")
+        .then(res => res.json())
+        .then(data => {
+          const sunsetUTC = new Date(data.results.sunset);
+          const sunsetParis = new Date(sunsetUTC.toLocaleString("en-US", { timeZone: "Europe/Paris" }));
+          sunsetParis.setMinutes(sunsetParis.getMinutes() + 10);
+          sunsetTimeParis = sunsetParis;
+          updateUI();
+        });
+    }
+
+    document.getElementById("langSelector").addEventListener("change", (e) => {
+      translateUI(e.target.value);
+      updateUI();
+    });
+
+    translateUI("auto");
+    fetchSunsetTime();
+    setInterval(updateUI, 1000);
+  </script>
+</body>
+</html>
