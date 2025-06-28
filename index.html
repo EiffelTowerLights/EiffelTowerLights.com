@@ -2,201 +2,223 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Luces Torre Eiffel</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
     body {
-      background-color: #1c1c2b;
-      color: white;
       font-family: 'Segoe UI', sans-serif;
+      background-color: #0a1a3a;
+      color: #f0f0f0;
       text-align: center;
-      margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      padding-top: 80px;
+      margin: 0 20px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 30px;
+    }
+    #countdown {
+  font-size: 3em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #f0f0f0;
+  text-shadow:
+    -1px -1px 0 red,
+     1px -1px 0 red,
+    -1px  1px 0 red,
+     1px  1px 0 red;
     }
 
-    .timer {
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 3rem;
-      font-weight: bold;
-      color: white;
-      text-shadow: 0 0 6px white;
-      margin: 10px 0 20px;
-      letter-spacing: 2px;
+    select {
+      font-size: 1em;
+      padding: 5px 10px;
+      margin-bottom: 10px;
     }
-
-    .red-outline {
-      color: white;
-      -webkit-text-stroke: 0.8px #ff3c3c;
-      text-shadow: none;
+    #info, #seo {
+      max-width: 700px;
+      margin: 20px auto;
+      font-size: 1.1em;
+      line-height: 1.6;
+      color: #d0d0d0;
     }
-
-    .subtext {
-      font-size: 1rem;
-      max-width: 600px;
-      margin-bottom: 15px;
-      color: white;
-    }
-
-    #langSelector {
-      margin-top: 20px;
-      padding: 8px;
-      font-size: 1rem;
-      border-radius: 4px;
-      border: none;
-      background-color: #fff;
-      color: #1c1c2b;
-      cursor: pointer;
+    #seo {
+      font-style: italic;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-  <div id="mainTitle" class="timer red-outline">Cargando...</div>
-  <div id="sunsetClock" class="timer red-outline" style="display: none;">--:--</div>
-  <div id="infoBox" class="subtext" style="display: none;"></div>
-  <div id="countdown" class="timer red-outline" style="display: none;">--:--:--</div>
-  <div id="postCountdownNote" class="subtext" style="display: none;"></div>
-
-  <select id="langSelector">
-    <option value="auto">🌐 Idioma automático</option>
+  <h1 id="title">Cargando...</h1>
+  <div id="countdown">--:--:--</div>
+  <select id="language">
     <option value="es">Español</option>
     <option value="en">English</option>
     <option value="fr">Français</option>
+    <option value="it">Italiano</option>
     <option value="zh">中文</option>
+    <option value="ja">日本語</option>
+    <option value="pt">Português</option>
   </select>
-
-  <p style="margin-top: 30px; font-size: 0.95rem; color: #ccc;">
-    Información del espectáculo de luces de la Torre Eiffel
-  </p>
+  <div id="info">...</div>
+  <div id="seo">Información del espectáculo de luces de la Torre Eiffel</div>
 
   <script>
     const translations = {
       es: {
-        beforeTitle: "Hora estimada del encendido de la Torre Eiffel",
-        afterTitle: "Próximo espectáculo de destellos",
-        beforeShow: "El espectáculo de destellos comenzará cada hora en punto después del encendido de la Torre Eiffel hasta la 1:00.",
-        afterShow: "El espectáculo de destellos comenzará a la siguiente hora en punto y durará 5 minutos.",
-        loading: "Cargando hora estimada..."
+        untilLighting: "Tiempo para el encendido de la Torre Eiffel",
+        untilShow: "Tiempo para el próximo espectáculo de luces",
+        inProgress: "¡Espectáculo en curso!",
+        infoBefore: "La Torre Eiffel se ilumina automáticamente 10 minutos después del atardecer. A partir de ese momento, cada hora en punto se enciende un deslumbrante espectáculo de luces hasta la 1:00 de la madrugada.",
+        infoAfter: "El espectáculo de luces tiene lugar cada hora exacta, comenzando al anochecer. Cada sesión dura aproximadamente 5 minutos, excepto el último espectáculo a la 1:00 a. m., que se extiende durante 10 minutos para cerrar la noche con brillo especial.",
+        seo: "Información del espectáculo de luces de la Torre Eiffel"
       },
       en: {
-        beforeTitle: "Estimated lighting time of the Eiffel Tower",
-        afterTitle: "Next sparkling show",
-        beforeShow: "The sparkling show begins every hour on the hour after the Eiffel Tower lights up until 1:00 am.",
-        afterShow: "The next sparkling show will begin at the next full hour and last 5 minutes.",
-        loading: "Loading estimated time..."
+        untilLighting: "Time until Eiffel Tower lighting",
+        untilShow: "Time until next light show",
+        inProgress: "Show in progress!",
+        infoBefore: "The Eiffel Tower lights up approximately 10 minutes after sunset. From that moment, a dazzling light show occurs every hour on the hour until 1:00 a.m.",
+        infoAfter: "The light show takes place every hour on the hour starting after the tower is illuminated. Each session lasts about 5 minutes, with the final 1:00 a.m. show lasting 10 minutes for a grand finale.",
+        seo: "Information about the Eiffel Tower light show"
       },
       fr: {
-        beforeTitle: "Heure estimée d’allumage de la Tour Eiffel",
-        afterTitle: "Prochain spectacle de scintillement",
-        beforeShow: "Le spectacle de scintillement commence à chaque heure pile après l’allumage de la Tour Eiffel, jusqu’à 1h00.",
-        afterShow: "Le prochain spectacle de scintillement commencera à l’heure pile suivante et durera 5 minutes.",
-        loading: "Chargement de l'heure estimée..."
+        untilLighting: "Temps avant l'illumination de la Tour Eiffel",
+        untilShow: "Temps avant le prochain spectacle lumineux",
+        inProgress: "Spectacle en cours !",
+        infoBefore: "La Tour Eiffel s’illumine environ 10 minutes après le coucher du soleil. À partir de ce moment-là, un spectacle scintillant a lieu toutes les heures jusqu’à 1h00 du matin.",
+        infoAfter: "Le spectacle de lumières a lieu chaque heure après l’illumination. Chaque session dure environ 5 minutes, sauf le dernier spectacle à 1h00 qui dure 10 minutes pour conclure la soirée en beauté.",
+        seo: "Informations sur le spectacle lumineux de la Tour Eiffel"
+      },
+      it: {
+        untilLighting: "Tempo prima dell'illuminazione della Torre Eiffel",
+        untilShow: "Tempo fino al prossimo spettacolo di luci",
+        inProgress: "Spettacolo in corso!",
+        infoBefore: "La Torre Eiffel si illumina circa 10 minuti dopo il tramonto. Da quel momento in poi, uno spettacolo scintillante si svolge ogni ora fino all'1:00 del mattino.",
+        infoAfter: "Lo spettacolo di luci si svolge ogni ora dopo l'accensione delle luci. Ogni sessione dura circa 5 minuti, fatta eccezione per lo spettacolo finale all'1:00, che dura 10 minuti per concludere la serata in grande stile.",
+        seo: "Informazioni sullo spettacolo di luci della Torre Eiffel"
       },
       zh: {
-        beforeTitle: "埃菲尔铁塔预计亮灯时间",
-        afterTitle: "下一场灯光秀",
-        beforeShow: "灯光秀将在埃菲尔铁塔点亮后每小时整点开始，持续至凌晨1点。",
-        afterShow: "下一场灯光秀将在下一个整点开始，持续5分钟。",
-        loading: "正在加载预计时间..."
-      }
+        untilLighting: "在艾菲爾鐵塔亮燈前",
+        untilShow: "距離下一場燈光秀還有",
+        inProgress: "演出進行中！",
+        infoBefore: "艾菲爾鐵塔在日落後約10分鐘亮燈。從那時起，每小時都會舉行一次璀璨的燈光秀，直到凌晨1點。",
+        infoAfter: "燈光秀每小時在亮燈儀式後舉行一次。每場演出約5分鐘，但凌晨1點的最後一場演出持續10分鐘，為夜晚畫下完美的句點。",
+        seo: "艾菲爾鐵塔燈光秀訊息"
+      },
+      ja: {
+        untilLighting: "エッフェル塔のライトアップ前の時間",
+        untilShow: "次のライトショーまでの時間",
+        inProgress: "上映中！",
+        infoBefore: "エッフェル塔は日没後約10分でライトアップされます。その後、午前1時まで1時間ごとにきらめくイルミネーションが点灯します。",
+        infoAfter: "ライトアップ後、1時間ごとにライトショーが開催されます。各ショーは約5分間ですが、午前1時の最終ショーは10分間続き、華やかに夜を締めくくります。",
+        seo: "エッフェル塔ライトショー情報"
+      },
+      pt: {
+        untilLighting: "Época antes da iluminação da Torre Eiffel",
+        untilShow: "Tempo até o próximo show de luzes",
+        inProgress: "Show em andamento!",
+        infoBefore: "A Torre Eiffel se ilumina cerca de 10 minutos após o pôr do sol. A partir daí, um espetáculo cintilante acontece a cada hora até a 1h da manhã.",
+        infoAfter: "O espetáculo de luzes acontece a cada hora após a iluminação. Cada sessão dura aproximadamente 5 minutos, exceto o espetáculo final, à 1h da manhã, que dura 10 minutos para encerrar a noite em grande estilo.",
+        seo: "Informações sobre o espetáculo de luzes da Torre Eiffel"
+      },
+
     };
 
-    let sunsetTimeParis = null;
-    let lastShowHour = 1;
+    let sunsetTime = null;
+    let lightingTime = null;
     let currentLang = "es";
 
-    function translateUI(langCode) {
-      const autoLang = navigator.language.slice(0, 2);
-      const lang = langCode === "auto" ? autoLang : langCode;
-      currentLang = translations[lang] ? lang : "es";
-      const t = translations[currentLang];
-      document.getElementById("mainTitle").textContent = t.loading;
-    }
+    document.getElementById("language").addEventListener("change", (e) => {
+      currentLang = e.target.value;
+      updateCountdown();
+    });
 
-    function formatParisTime(date) {
-      return date.toLocaleTimeString("fr-FR", {
-        timeZone: "Europe/Paris",
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    }
-
-    function updateUI() {
-      if (!sunsetTimeParis) return;
-
-      const now = new Date();
-      const parisNow = new Date(now.toLocaleString("en-US", { timeZone: "Europe/Paris" }));
-      const t = translations[currentLang];
-      const isBeforeShow = parisNow < sunsetTimeParis;
-
-      document.getElementById("mainTitle").textContent = isBeforeShow
-        ? t.beforeTitle
-        : t.afterTitle;
-
-      document.getElementById("sunsetClock").textContent = formatParisTime(sunsetTimeParis);
-      document.getElementById("sunsetClock").style.display = isBeforeShow ? "block" : "none";
-
-      document.getElementById("infoBox").innerHTML = isBeforeShow ? t.beforeShow : "";
-      document.getElementById("infoBox").style.display = isBeforeShow ? "block" : "none";
-
-      document.getElementById("countdown").style.display = !isBeforeShow ? "block" : "none";
-      document.getElementById("postCountdownNote").style.display = !isBeforeShow ? "block" : "none";
-      document.getElementById("postCountdownNote").textContent = !isBeforeShow ? t.afterShow : "";
-
-      if (!isBeforeShow) updateCountdown(parisNow);
-    }
-
-    function updateCountdown(parisNow) {
-      let nextShow = new Date(sunsetTimeParis);
-      nextShow.setMinutes(0, 0, 0);
-      while (parisNow >= nextShow && nextShow.getHours() < lastShowHour) {
-        nextShow.setHours(nextShow.getHours() + 1);
+    async function fetchSunsetTime() {
+      try {
+        const res = await fetch("https://api.sunrise-sunset.org/json?lat=48.8584&lng=2.2945&formatted=0");
+        const data = await res.json();
+        sunsetTime = new Date(data.results.sunset);
+        lightingTime = new Date(sunsetTime.getTime() + 10 * 60000);
+      } catch (e) {
+        console.error("Error al obtener la hora del atardecer", e);
       }
+    }
 
-      if (nextShow.getHours() > lastShowHour) {
-        document.getElementById("countdown").textContent =
-          currentLang === "zh"
-            ? "今日灯光秀已结束"
-            : currentLang === "fr"
-              ? "Dernier spectacle terminé pour aujourd'hui"
-              : currentLang === "en"
-                ? "Last show finished for today"
-                : "Último espectáculo finalizado por hoy";
-        document.getElementById("postCountdownNote").style.display = "none";
+    function getParisTime() {
+      const now = new Date();
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      return new Date(utc + 2 * 60 * 60000);
+    }
+
+    function updateCountdown() {
+      const now = getParisTime();
+      const title = document.getElementById("title");
+      const countdown = document.getElementById("countdown");
+      const info = document.getElementById("info");
+      const seo = document.getElementById("seo");
+      const lang = translations[currentLang] || translations["en"];
+
+      if (!lightingTime) {
+        title.textContent = lang.untilLighting;
+        countdown.textContent = "--:--:--";
+        info.textContent = lang.infoBefore;
+        seo.textContent = lang.seo;
         return;
       }
 
-      const diff = nextShow - parisNow;
-      const hrs = String(Math.floor(diff / 3600000)).padStart(2, "0");
-      const mins = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
-      const secs = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+      const hour = now.getHours();
+      const afterLighting = now >= lightingTime;
+      const afterOneAM = hour >= 1 && hour < 20;
 
-      document.getElementById("countdown").textContent = `${hrs}:${mins}:${secs}`;
+      let target, label, infoText;
+
+      if (afterOneAM) {
+        target = new Date(lightingTime);
+        target.setDate(now.getDate());
+        if (now >= target) {
+          target.setDate(target.getDate() + 1);
+        }
+        label = lang.untilLighting;
+        infoText = lang.infoBefore;
+      } else if (afterLighting) {
+        const oneAM = new Date(now);
+        oneAM.setHours(1, 0, 0, 0);
+        if (now >= oneAM) {
+          target = new Date(lightingTime);
+          target.setDate(now.getDate() + 1);
+          label = lang.untilLighting;
+          infoText = lang.infoBefore;
+        } else {
+          target = oneAM;
+          label = lang.untilShow;
+          infoText = lang.infoAfter;
+        }
+      } else {
+        target = lightingTime;
+        label = lang.untilLighting;
+        infoText = lang.infoBefore;
+      }
+
+      const diff = target - now;
+      if (diff > 0) {
+        const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+        const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        countdown.textContent = `${h}:${m}:${s}`;
+      } else {
+        countdown.textContent = lang.inProgress;
+      }
+
+      title.textContent = label;
+      info.textContent = infoText;
+      seo.textContent = lang.seo;
     }
 
-    function fetchSunsetTime() {
-      fetch("https://api.sunrise-sunset.org/json?lat=48.8566&lng=2.3522&formatted=0")
-        .then(res => res.json())
-        .then(data => {
-          const sunsetUTC = new Date(data.results.sunset);
-          const sunsetParis = new Date(sunsetUTC.toLocaleString("en-US", { timeZone: "Europe/Paris" }));
-          sunsetParis.setMinutes(sunsetParis.getMinutes() + 10);
-          sunsetTimeParis = sunsetParis;
-          updateUI();
-        });
+    async function init() {
+      await fetchSunsetTime();
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
     }
 
-    document.getElementById("langSelector").addEventListener("change", (e) => {
-      translateUI(e.target.value);
-      updateUI();
-    });
-
-    translateUI("auto");
-    fetchSunsetTime();
-    setInterval(updateUI, 1000);
+    init();
   </script>
 </body>
+</html>
