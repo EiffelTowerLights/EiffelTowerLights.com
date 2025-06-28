@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Luces Torre Eiffel</title>
+  <style>
+    body {
+      background: linear-gradient(to top, #1c1c2b, #2e2e48);
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    #countdown {
+      font-size: 3rem;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+    .subtext {
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+    #langSelector {
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: none;
+      background-color: #fff;
+      color: #1c1c2b;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="headline">Próximo encendido de luces 🗼</h1>
+  <div id="countdown">--:--:--</div>
+  <div class="subtext" id="subtext">
+    Cada hora después del anochecer, durante 5 minutos.
+  </div>
+
+  <select id="langSelector">
+    <option value="auto">🌐 Idioma automático</option>
+    <option value="es">Español</option>
+    <option value="en">English</option>
+    <option value="fr">Français</option>
+    <option value="de">Deutsch</option>
+    <option value="it">Italiano</option>
+    <option value="pt">Português</option>
+    <option value="ja">日本語</option>
+  </select>
+
+  <script>
+    const translations = {
+      es: {
+        title: "Próximo encendido de luces 🗼",
+        note: "Cada hora después del anochecer, durante 5 minutos."
+      },
+      en: {
+        title: "Next Eiffel Tower light show 🗼",
+        note: "Every hour after nightfall, lasting 5 minutes."
+      },
+      fr: {
+        title: "Prochaine illumination de la Tour Eiffel 🗼",
+        note: "Chaque heure après la tombée de la nuit, pendant 5 minutes."
+      },
+      de: {
+        title: "Nächste Lichtshow am Eiffelturm 🗼",
+        note: "Jede Stunde nach Einbruch der Dunkelheit, 5 Minuten lang."
+      },
+      it: {
+        title: "Prossimo spettacolo luminoso 🗼",
+        note: "Ogni ora dopo il tramonto, per 5 minuti."
+      },
+      pt: {
+        title: "Próxima iluminação da Torre Eiffel 🗼",
+        note: "A cada hora após o anoitecer, durante 5 minutos."
+      },
+      ja: {
+        title: "次のエッフェル塔のライトショー 🗼",
+        note: "日没後毎時に5分間点灯します。"
+      }
+    };
+
+    let sunsetTimeParis = null;
+    let lastShowHour = 0;
+
+    function translateUI(langCode) {
+      const autoLang = navigator.language.slice(0, 2);
+      const lang = langCode === "auto" ? autoLang : langCode;
+      const strings = translations[lang] || translations["en"];
+      document.getElementById("headline").textContent = strings.title;
+      document.getElementById("subtext").textContent = strings.note;
+    }
+
+    function updateCountdown() {
+      if (!sunsetTimeParis) return;
+
+      const nowUTC = new Date().getTime() + new Date().getTimezoneOffset() * 60000;
+      const parisTimeZone = 'Europe/Paris';
+      const parisNow = new Date(new Intl.DateTimeFormat('en-US', {
+        timeZone: parisTimeZone,
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).formatToParts(new Date()).map(p => p.value).join(':'));
+
+      const now = new Date();
+      const parisOffset = -now.getTimezoneOffset() + new Date().toLocaleString("en-US", { timeZone: parisTimeZone }).getTimezoneOffset();
+      const adjustedNow = new Date(now.getTime() + parisOffset * 60000);
+
+      let nextShow = new Date(sunsetTimeParis.getTime());
+      nextShow.setMinutes(0, 0, 0);
+      if (adjustedNow > nextShow) {
+        while (adjustedNow > nextShow && nextShow.getHours() < lastShowHour) {
+          nextShow.setHours(nextShow.getHours() + 1);
+        }
+      }
+
+      if (nextShow.getHours() > lastShowHour) {
+        document.getElementById("countdown").textContent = "Finalizado por hoy";
+        return;
+      }
+
+      const diff = nextShow - adjustedNow;
+      const hrs = String(Math.floor(diff / 3600000)).padStart(2, "0");
+      const mins = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+      const secs = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
+
+      document.getElementById("countdown").textContent = `${hrs}:${mins}:${secs}`;
+    }
+
+    function fetchSunsetTime() {
+      fetch("https://api.sunrise-sunset.org/json?lat=48.8566&lng=2.3522&formatted=0")
+        .then(res => res.json())
+        .then(data => {
+          const sunsetUTC = new Date(data.results.sunset);
+          const offset = new Date().toLocaleString("en-US", { timeZone: "Europe/Paris" });
+          const parisNow = new Date(offset);
+          const isSummer = [5,6,7].includes(parisNow.getMonth()); // junio-agosto
+          lastShowHour = isSummer ? 1 : 0; // 1:00 o 0:00
+
+          sunsetTimeParis = new Date(sunsetUTC.getTime() + 10 * 60000 + 120 * 60000); // +10 min + UTC+2
+          updateCountdown();
+        })
+        .catch(err => {
+          console.error("Error fetching sunset time:", err);
+        });
+    }
+
+    document.getElementById("langSelector").addEventListener("change", e => {
+      translateUI(e.target.value);
+    });
+
+    translateUI("auto");
+    fetchSunsetTime();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
