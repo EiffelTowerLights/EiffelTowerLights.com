@@ -6,9 +6,6 @@
 <meta property="og:image" content="https://EiffelTowerLights.github.io/EiffelTowerLights/images/eiffel.png">
 <meta name="twitter:image" content="https://EiffelTowerLights.github.io/EiffelTowerLights/images/torre-eiffel.png">
   <meta charset="UTF-8" />
-  <meta charset="UTF-8" />    
-  <meta charset="UTF-8" />
-  <meta charset="UTF-8" />
   <title>Luces Torre Eiffel</title>
   <style>
     body {
@@ -55,8 +52,6 @@
 </head>
 <meta property="og:image" content="https://EiffelTowerLights.github.io/EiffelTowerLights/images/eiffel.png">
 <meta name="twitter:image" content="https://EiffelTowerLights.github.io/EiffelTowerLights/images/torre-eiffel.png">
-  <meta charset="UTF-8" />
-  <meta charset="UTF-8" />  
 <body>
   <h1 id="title">Cargando...</h1>
   <div id="countdown">--:--:--</div>
@@ -159,13 +154,20 @@
       return new Date(utc + 2 * 60 * 60000);
     }
 
+    function getNextHourlyShowTime(now) {
+      const next = new Date(now);
+      next.setMinutes(0, 0, 0);
+      next.setHours(next.getHours() + 1);
+      return next;
+    }
+
     function updateCountdown() {
       const now = getParisTime();
       const title = document.getElementById("title");
       const countdown = document.getElementById("countdown");
       const info = document.getElementById("info");
       const seo = document.getElementById("seo");
-      const lang = translations[currentLang] || translations["en"];
+      const lang = translations[currentLang] || translations["es"];
 
       if (!lightingTime) {
         title.textContent = lang.untilLighting;
@@ -175,37 +177,28 @@
         return;
       }
 
-      const hour = now.getHours();
-      const afterLighting = now >= lightingTime;
-      const afterOneAM = hour >= 1 && hour < 20;
+      let label, infoText, target;
 
-      let target, label, infoText;
-
-      if (afterOneAM) {
-        target = new Date(lightingTime);
-        target.setDate(now.getDate());
-        if (now >= target) {
-          target.setDate(target.getDate() + 1);
-        }
+      if (now < lightingTime) {
+        // Antes del encendido
+        target = lightingTime;
         label = lang.untilLighting;
         infoText = lang.infoBefore;
-      } else if (afterLighting) {
-        const oneAM = new Date(now);
-        oneAM.setHours(1, 0, 0, 0);
-        if (now >= oneAM) {
+      } else {
+        const hour = now.getHours();
+        const isAfterOne = hour >= 1 && hour < 20;
+        const nextShow = getNextHourlyShowTime(now);
+
+        if (isAfterOne) {
           target = new Date(lightingTime);
           target.setDate(now.getDate() + 1);
           label = lang.untilLighting;
           infoText = lang.infoBefore;
         } else {
-          target = oneAM;
+          target = nextShow;
           label = lang.untilShow;
           infoText = lang.infoAfter;
         }
-      } else {
-        target = lightingTime;
-        label = lang.untilLighting;
-        infoText = lang.infoBefore;
       }
 
       const diff = target - now;
