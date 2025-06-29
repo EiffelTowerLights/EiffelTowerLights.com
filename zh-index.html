@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>埃菲尔铁塔的灯光</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a1a3a;
+      color: #f0f0f0;
+      text-align: center;
+      padding-top: 80px;
+      margin: 0 20px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 30px;
+    }
+    #countdown {
+  font-size: 3em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #f0f0f0;
+  text-shadow:
+    -1px -1px 0 red,
+     1px -1px 0 red,
+    -1px  1px 0 red,
+     1px  1px 0 red;
+    }
+
+    select {
+      font-size: 1em;
+      padding: 5px 10px;
+      margin-bottom: 10px;
+    }
+    #info, #seo {
+      max-width: 700px;
+      margin: 20px auto;
+      font-size: 1.1em;
+      line-height: 1.6;
+      color: #d0d0d0;
+    }
+    #seo {
+      font-style: italic;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">加载中...</h1>
+  <div id="countdown">--:--:--</div>
+  <select id="language">
+    <option value="es">Español</option>
+    <option value="en">English</option>
+    <option value="fr">Français</option>
+    <option value="it">Italiano</option>
+    <option value="zh">中文</option>
+    <option value="ja">日本語</option>
+    <option value="pt">Português</option>
+  </select>
+  <div id="info">...</div>
+  <div id="seo">Información del espectáculo de luces de la Torre Eiffel</div>
+
+  <script>
+    const translations = {
+      es: {
+        untilLighting: "Tiempo para el encendido de la Torre Eiffel",
+        untilShow: "Tiempo para el próximo espectáculo de luces",
+        inProgress: "¡Espectáculo en curso!",
+        infoBefore: "La Torre Eiffel se ilumina automáticamente 10 minutos después del atardecer. A partir de ese momento, cada hora en punto se enciende un deslumbrante espectáculo de luces hasta la 1:00 de la madrugada.",
+        infoAfter: "El espectáculo de luces tiene lugar cada hora exacta, comenzando al anochecer. Cada sesión dura aproximadamente 5 minutos, excepto el último espectáculo a la 1:00 a. m., que se extiende durante 10 minutos para cerrar la noche con brillo especial.",
+        seo: "Información del espectáculo de luces de la Torre Eiffel"
+      },
+      en: {
+        untilLighting: "Time until Eiffel Tower lighting",
+        untilShow: "Time until next light show",
+        inProgress: "Show in progress!",
+        infoBefore: "The Eiffel Tower lights up approximately 10 minutes after sunset. From that moment, a dazzling light show occurs every hour on the hour until 1:00 a.m.",
+        infoAfter: "The light show takes place every hour on the hour starting after the tower is illuminated. Each session lasts about 5 minutes, with the final 1:00 a.m. show lasting 10 minutes for a grand finale.",
+        seo: "Information about the Eiffel Tower light show"
+      },
+      fr: {
+        untilLighting: "Temps avant l'illumination de la Tour Eiffel",
+        untilShow: "Temps avant le prochain spectacle lumineux",
+        inProgress: "Spectacle en cours !",
+        infoBefore: "La Tour Eiffel s’illumine environ 10 minutes après le coucher du soleil. À partir de ce moment-là, un spectacle scintillant a lieu toutes les heures jusqu’à 1h00 du matin.",
+        infoAfter: "Le spectacle de lumières a lieu chaque heure après l’illumination. Chaque session dure environ 5 minutes, sauf le dernier spectacle à 1h00 qui dure 10 minutes pour conclure la soirée en beauté.",
+        seo: "Informations sur le spectacle lumineux de la Tour Eiffel"
+      },
+      it: {
+        untilLighting: "Tempo prima dell'illuminazione della Torre Eiffel",
+        untilShow: "Tempo fino al prossimo spettacolo di luci",
+        inProgress: "Spettacolo in corso!",
+        infoBefore: "La Torre Eiffel si illumina circa 10 minuti dopo il tramonto. Da quel momento in poi, uno spettacolo scintillante si svolge ogni ora fino all'1:00 del mattino.",
+        infoAfter: "Lo spettacolo di luci si svolge ogni ora dopo l'accensione delle luci. Ogni sessione dura circa 5 minuti, fatta eccezione per lo spettacolo finale all'1:00, che dura 10 minuti per concludere la serata in grande stile.",
+        seo: "Informazioni sullo spettacolo di luci della Torre Eiffel"
+      },
+      zh: {
+        untilLighting: "在艾菲爾鐵塔亮燈前",
+        untilShow: "距離下一場燈光秀還有",
+        inProgress: "演出進行中！",
+        infoBefore: "艾菲爾鐵塔在日落後約10分鐘亮燈。從那時起，每小時都會舉行一次璀璨的燈光秀，直到凌晨1點。",
+        infoAfter: "燈光秀每小時在亮燈儀式後舉行一次。每場演出約5分鐘，但凌晨1點的最後一場演出持續10分鐘，為夜晚畫下完美的句點。",
+        seo: "艾菲爾鐵塔燈光秀訊息"
+      },
+      ja: {
+        untilLighting: "エッフェル塔のライトアップ前の時間",
+        untilShow: "次のライトショーまでの時間",
+        inProgress: "上映中！",
+        infoBefore: "エッフェル塔は日没後約10分でライトアップされます。その後、午前1時まで1時間ごとにきらめくイルミネーションが点灯します。",
+        infoAfter: "ライトアップ後、1時間ごとにライトショーが開催されます。各ショーは約5分間ですが、午前1時の最終ショーは10分間続き、華やかに夜を締めくくります。",
+        seo: "エッフェル塔ライトショー情報"
+      },
+      pt: {
+        untilLighting: "Época antes da iluminação da Torre Eiffel",
+        untilShow: "Tempo até o próximo show de luzes",
+        inProgress: "Show em andamento!",
+        infoBefore: "A Torre Eiffel se ilumina cerca de 10 minutos após o pôr do sol. A partir daí, um espetáculo cintilante acontece a cada hora até a 1h da manhã.",
+        infoAfter: "O espetáculo de luzes acontece a cada hora após a iluminação. Cada sessão dura aproximadamente 5 minutos, exceto o espetáculo final, à 1h da manhã, que dura 10 minutos para encerrar a noite em grande estilo.",
+        seo: "Informações sobre o espetáculo de luzes da Torre Eiffel"
+      },
+
+    };
+
+    let sunsetTime = null;
+    let lightingTime = null;
+    let currentLang = "zh";
+
+    document.getElementById("language").addEventListener("change", (e) => {
+      currentLang = e.target.value;
+      updateCountdown();
+    });
+
+    async function fetchSunsetTime() {
+      try {
+        const res = await fetch("https://api.sunrise-sunset.org/json?lat=48.8584&lng=2.2945&formatted=0");
+        const data = await res.json();
+        sunsetTime = new Date(data.results.sunset);
+        lightingTime = new Date(sunsetTime.getTime() + 10 * 60000);
+      } catch (e) {
+        console.error("Error al obtener la hora del atardecer", e);
+      }
+    }
+
+    function getParisTime() {
+      const now = new Date();
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      return new Date(utc + 2 * 60 * 60000);
+    }
+
+    function updateCountdown() {
+      const now = getParisTime();
+      const title = document.getElementById("title");
+      const countdown = document.getElementById("countdown");
+      const info = document.getElementById("info");
+      const seo = document.getElementById("seo");
+      const lang = translations[currentLang] || translations["en"];
+
+      if (!lightingTime) {
+        title.textContent = lang.untilLighting;
+        countdown.textContent = "--:--:--";
+        info.textContent = lang.infoBefore;
+        seo.textContent = lang.seo;
+        return;
+      }
+
+      const hour = now.getHours();
+      const afterLighting = now >= lightingTime;
+      const afterOneAM = hour >= 1 && hour < 20;
+
+      let target, label, infoText;
+
+      if (afterOneAM) {
+        target = new Date(lightingTime);
+        target.setDate(now.getDate());
+        if (now >= target) {
+          target.setDate(target.getDate() + 1);
+        }
+        label = lang.untilLighting;
+        infoText = lang.infoBefore;
+      } else if (afterLighting) {
+        const oneAM = new Date(now);
+        oneAM.setHours(1, 0, 0, 0);
+        if (now >= oneAM) {
+          target = new Date(lightingTime);
+          target.setDate(now.getDate() + 1);
+          label = lang.untilLighting;
+          infoText = lang.infoBefore;
+        } else {
+          target = oneAM;
+          label = lang.untilShow;
+          infoText = lang.infoAfter;
+        }
+      } else {
+        target = lightingTime;
+        label = lang.untilLighting;
+        infoText = lang.infoBefore;
+      }
+
+      const diff = target - now;
+      if (diff > 0) {
+        const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+        const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        countdown.textContent = `${h}:${m}:${s}`;
+      } else {
+        countdown.textContent = lang.inProgress;
+      }
+
+      title.textContent = label;
+      info.textContent = infoText;
+      seo.textContent = lang.seo;
+    }
+
+    async function init() {
+      await fetchSunsetTime();
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    init();
+  </script>
+</body>
+</html>
